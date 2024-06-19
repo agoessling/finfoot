@@ -1,4 +1,8 @@
+use nalgebra::DVector;
+
 pub mod dopri5;
+
+pub type DerivativeFunc = dyn Fn(f64, &DVector<f64>) -> DVector<f64>;
 
 #[derive(Debug)]
 pub enum InputError {

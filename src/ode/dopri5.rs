@@ -1,16 +1,25 @@
+use std::fmt;
+
 use nalgebra::DVector;
 
-use super::{Error, InputError};
+use super::{DerivativeFunc, Error, InputError};
 
-#[derive(Debug)]
-pub struct Input<'a, F>
-where
-    F: Fn(f64, &DVector<f64>) -> DVector<f64>,
-{
+pub struct Input<'a> {
     pub t_span: [f64; 2],
     pub y0: &'a DVector<f64>,
     pub h0: f64,
-    pub f: &'a F,
+    pub f: &'a DerivativeFunc,
+}
+
+impl fmt::Debug for Input<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("Input")
+            .field("t_span", &self.t_span)
+            .field("y0", self.y0)
+            .field("h0", &self.h0)
+            .field("f", &"DerivativeFunc")
+            .finish()
+    }
 }
 
 #[derive(Debug)]
@@ -26,10 +35,7 @@ pub struct Output {
     pub num_calls: usize,
 }
 
-pub fn integrate<F>(input: &Input<F>, config: &Config) -> Result<Output, Error>
-where
-    F: Fn(f64, &DVector<f64>) -> DVector<f64>,
-{
+pub fn integrate(input: &Input, config: &Config) -> Result<Output, Error> {
     validate_input(input)?;
 
     let mut t = input.t_span[0];
@@ -86,10 +92,7 @@ where
     Ok(Output { y, h, num_calls })
 }
 
-fn validate_input<F>(input: &Input<F>) -> Result<(), InputError>
-where
-    F: Fn(f64, &DVector<f64>) -> DVector<f64>,
-{
+fn validate_input(input: &Input) -> Result<(), InputError> {
     if input.t_span[0] > input.t_span[1] {
         return Err(InputError::TimeSpan);
     }
@@ -106,10 +109,13 @@ struct StepOutput {
     num_calls: usize,
 }
 
-fn dopri5_step<F>(t: f64, y: &DVector<f64>, f: &F, h: f64, k1: &Option<DVector<f64>>) -> StepOutput
-where
-    F: Fn(f64, &DVector<f64>) -> DVector<f64>,
-{
+fn dopri5_step(
+    t: f64,
+    y: &DVector<f64>,
+    f: &DerivativeFunc,
+    h: f64,
+    k1: &Option<DVector<f64>>,
+) -> StepOutput {
     const C_COEFF: [f64; 7] = [0.0, 1.0 / 5.0, 3.0 / 10.0, 4.0 / 5.0, 8.0 / 9.0, 1.0, 1.0];
     const A_COEFF: [[f64; 6]; 6] = [
         [1.0 / 5.0, 0.0, 0.0, 0.0, 0.0, 0.0],
