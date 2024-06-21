@@ -9,5 +9,6 @@ edition = "2021"
 nalgebra = "0.32"
 
 [dev-dependencies]
+paste = "1.0"
 speculoos = "0.11"
 

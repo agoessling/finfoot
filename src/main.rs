@@ -16,7 +16,7 @@ fn main() {
     let mut num_calls = 0;
 
     while t < 30.0 {
-        println!("{:.6e}, {:.6e}, {:.6e}, {}", t, y[0], y[1], num_calls);
+        println!("{t:.6e}, {:.6e}, {:.6e}, {num_calls}", y[0], y[1]);
 
         let input = dopri5::Input {
             t_span: [t, t + TIMESTEP],

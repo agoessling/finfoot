@@ -26,7 +26,7 @@ def all_problems() -> list[OdeProblem]:
     omega = 2.0 * np.pi
     f = lambda _, y: [y[1], -omega**2 * y[0]]
     problems.append(
-        OdeProblem(name='harmonic oscillator',
+        OdeProblem(name='harmonic_oscillator',
                    t_span=(0.0, 1.0),
                    y0=[1.0, 0.0],
                    f=f))
@@ -35,7 +35,7 @@ def all_problems() -> list[OdeProblem]:
     mu = 5.0
     f = lambda _, y: [y[1], mu * (1.0 - y[0]**2) * y[1] - y[0]]
     problems.append(
-        OdeProblem(name='van der pol oscillator',
+        OdeProblem(name='van_der_pol_oscillator',
                    t_span=(0.0, 15.0),
                    y0=[1.0, 0.0],
                    f=f))
@@ -46,7 +46,7 @@ def all_problems() -> list[OdeProblem]:
     beta = 8.0 / 3.0
     f = lambda _, y: [sigma * (y[1] - y[0]), y[0] * (rho - y[2]) - y[1], y[0] * y[1] - beta * y[2]]
     problems.append(
-        OdeProblem(name='lorentz attractor',
+        OdeProblem(name='lorentz_attractor',
                    t_span=(0.0, 5.0),
                    y0=[1.0, 1.0, 1.0],
                    f=f))
@@ -58,10 +58,31 @@ def all_problems() -> list[OdeProblem]:
         3e7 * y[1]**2,
     ];
     problems.append(
-        OdeProblem(name='robertson equations',
+        OdeProblem(name='robertson_equations',
                    t_span=(0.0, 30.0),
                    y0=[1.0, 0.0, 0.0],
                    f=f))
+
+    # Coupled oscillators with full coupling.
+    n = 100  # Number of oscillators
+    k = 1.0  # Coupling constant
+
+    # Initial positions and velocities.
+    y0 = [np.sin(i) for i in range(n)] + [np.cos(i) for i in range(n)]
+
+    def coupled_oscillators(_, y):
+        dydt = [0.0] * (2 * n)
+        for i in range(n):
+            dydt[i] = y[n + i]  # Velocity
+            sum_coupling = sum(y[i] - y[j] for j in range(n))
+            dydt[n + i] = -k * sum_coupling  # Acceleration
+        return dydt
+
+    problems.append(
+        OdeProblem(name='coupled_oscillators',
+                   t_span=(0.0, 10.0),
+                   y0=y0,
+                   f=coupled_oscillators))
 
     return problems
 
