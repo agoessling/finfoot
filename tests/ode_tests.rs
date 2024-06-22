@@ -246,17 +246,17 @@ fn assert_dvector_close(
     b: &DVector<f64>,
     tolerance: &DVector<f64>,
     name: &str,
-) -> () {
+) {
     assert!(a.len() == b.len() && b.len() == tolerance.len());
 
     for i in 0..a.len() {
         assert_that!(a[i])
-            .named(&format!("{} element {}", name, i))
+            .named(&format!("{name} element {i}"))
             .is_close_to(b[i], tolerance[i]);
     }
 }
 
-fn test_problem(problem: &OdeProblem) -> () {
+fn test_problem(problem: &OdeProblem) {
     const CONFIG: dopri5::Config = dopri5::Config {
         rel_tol: 1e-4,
         abs_tol: 1e-6,

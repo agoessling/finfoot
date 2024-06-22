@@ -12,3 +12,27 @@ nalgebra = "0.32"
 paste = "1.0"
 speculoos = "0.11"
 
+[lints.rust]
+warnings = { level = "deny", priority = 0 }
+future-incompatible = { level = "deny", priority = 0 }
+keyword-idents = { level = "deny", priority = 0 }
+let-underscore = { level = "deny", priority = 0 }
+nonstandard-style = { level = "deny", priority = 0 }
+refining-impl-trait = { level = "deny", priority = 0 }
+rust-2018-compatibility	= { level = "deny", priority = 0 }
+rust-2018-idioms = { level = "deny", priority = 0 }
+rust-2021-compatibility = { level = "deny", priority = 0 }
+rust-2024-compatibility = { level = "deny", priority = 0 }
+unused = { level = "deny", priority = 1 }
+
+
+[lints.clippy]
+correctness = { level = "deny", priority = 0 }
+suspicious = { level = "deny", priority = 0 }
+complexity = { level = "deny", priority = 0 }
+perf = { level = "deny", priority = 0 }
+style = { level = "deny", priority = 0 }
+pedantic = { level = "deny", priority = 0 }
+items_after_statements = { level = "allow", priority = 1 }
+missing_errors_doc = { level = "allow", priority = 1 }
+unreadable_literal = { level = "allow", priority = 1 }

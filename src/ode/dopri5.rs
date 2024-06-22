@@ -35,7 +35,7 @@ pub struct Output {
     pub num_calls: usize,
 }
 
-pub fn integrate(input: &Input, config: &Config) -> Result<Output, Error> {
+pub fn integrate(input: &Input<'_>, config: &Config) -> Result<Output, Error> {
     validate_input(input)?;
 
     let mut t = input.t_span[0];
@@ -92,7 +92,7 @@ pub fn integrate(input: &Input, config: &Config) -> Result<Output, Error> {
     Ok(Output { y, h, num_calls })
 }
 
-fn validate_input(input: &Input) -> Result<(), InputError> {
+fn validate_input(input: &Input<'_>) -> Result<(), InputError> {
     if input.t_span[0] > input.t_span[1] {
         return Err(InputError::TimeSpan);
     }
@@ -109,6 +109,7 @@ struct StepOutput {
     num_calls: usize,
 }
 
+#[allow(clippy::too_many_lines)]
 fn dopri5_step(
     t: f64,
     y: &DVector<f64>,
