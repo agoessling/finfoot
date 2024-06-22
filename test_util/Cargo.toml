@@ -1,0 +1,11 @@
+[package]
+name = "test_util"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+finfoot = { path = "../." }
+nalgebra = "0.32"
+
+[lints]
+workspace = true

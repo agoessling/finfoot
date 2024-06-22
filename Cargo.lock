@@ -30,6 +30,7 @@ dependencies = [
  "nalgebra",
  "paste",
  "speculoos",
+ "test_util",
 ]
 
 [[package]]
@@ -212,6 +213,14 @@ dependencies = [
  "proc-macro2",
  "quote",
  "unicode-ident",
+]
+
+[[package]]
+name = "test_util"
+version = "0.1.0"
+dependencies = [
+ "finfoot",
+ "nalgebra",
 ]
 
 [[package]]
