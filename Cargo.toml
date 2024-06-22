@@ -34,9 +34,14 @@ edition = "2021"
 nalgebra = "0.32"
 
 [dev-dependencies]
+criterion = "0.5"
 paste = "1.0"
 speculoos = "0.11"
 test_util = { path = "./test_util" }
 
 [lints]
 workspace = true
+
+[[bench]]
+name = "ode_benchmark"
+harness = false
