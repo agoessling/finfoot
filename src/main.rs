@@ -1,40 +1,44 @@
-use nalgebra::DVector;
+use uom::fmt::DisplayStyle::Abbreviation;
+use uom::si::acceleration::meter_per_second_squared;
+use uom::si::length::meter;
+use uom::si::velocity::meter_per_second;
+use uom::si::{
+    f64::{Acceleration, Length, Velocity},
+    ISQ,
+};
+use uom::si::{Dimension, Quantity, Units};
+use uom::Conversion;
 
-use finfoot::ode::dopri5;
+use typenum::operator_aliases::Diff;
+use typenum::{Integer, P1};
+
+use uom::num_traits::Num;
+
+trait DivideByTime {
+    type Type;
+}
+
+impl<D, U, V> DivideByTime for Quantity<D, U, V>
+where
+    D: Dimension + ?Sized,
+    U: Units<V> + ?Sized,
+    V: Num + Conversion<V>,
+    D::T: std::ops::Sub<P1>,
+    Diff<D::T, P1>: Integer,
+{
+    type Type = Quantity<ISQ<D::L, D::M, Diff<D::T, P1>, D::I, D::Th, D::N, D::J, D::Kind>, U, V>;
+}
+
+type TimeDerivative<T> = <T as DivideByTime>::Type;
 
 fn main() {
-    let van_der_pol = |_: f64, y: &DVector<f64>| {
-        let x = y[0];
-        let dx = y[1];
-        DVector::from_vec(vec![dx, 5.0 * (1.0 - x * x) * dx - x])
-    };
-
-    const TIMESTEP: f64 = 30.0 - 0.1;
-    let mut t: f64 = 0.0;
-    let mut y = DVector::from_vec(vec![1.0, -0.5]);
-    let mut h = TIMESTEP;
-    let mut num_calls = 0;
-
-    while t < 30.0 {
-        println!("{t:.6e}, {:.6e}, {:.6e}, {num_calls}", y[0], y[1]);
-
-        let input = dopri5::Input {
-            t_span: [t, t + TIMESTEP],
-            y0: &y,
-            h0: h,
-            f: &van_der_pol,
-        };
-
-        const CONFIG: dopri5::Config = dopri5::Config {
-            rel_tol: 1e-6,
-            abs_tol: 1e-6,
-        };
-
-        let output = dopri5::integrate(&input, &CONFIG).unwrap();
-
-        t += TIMESTEP;
-        y = output.y;
-        h = output.h;
-        num_calls = output.num_calls;
-    }
+    let position = Length::new::<meter>(1.0);
+    let velocity = Velocity::new::<meter_per_second>(1.0);
+    let test = TimeDerivative::<Velocity>::new::<meter_per_second_squared>(2.0);
+    println!(
+        "{}, {}, {}",
+        Length::format_args(meter, Abbreviation).with(position),
+        Velocity::format_args(meter_per_second, Abbreviation).with(velocity),
+        Acceleration::format_args(meter_per_second_squared, Abbreviation).with(test),
+    );
 }
